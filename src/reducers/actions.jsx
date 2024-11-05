@@ -19,3 +19,8 @@ export const deleteNote = (index) => ({
   type: "DELETE_NOTE",
   payload: index,
 });
+
+
+//export DELETE_NODE as "DELETE_NODE"
+
+
