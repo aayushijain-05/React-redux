@@ -20,7 +20,7 @@
 //       }
 //       setIsEditing({ index: null, value: "" });
 //     } else {
-//       setIsEditing({ index, value: notes[index]?.text || "" }); 
+//       setIsEditing({ index, value: notes[index]?.text || "" });
 //     }
 //   };
 
@@ -62,7 +62,7 @@
 //                     checkedNotes[index] ? "text-gray-400 line-through" : ""
 //                   }`}
 //                 >
-//                   {note.text} 
+//                   {note.text}
 //                 </span>
 //               )}
 //             </div>
@@ -93,10 +93,14 @@
 
 // export default NotesList;
 
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteNote, editNote } from "../reducers/actions";
+import { fetchNotes, deleteNote, editNote } from "../reducers/actions";
+import {
+  fetchNotesFromAPI,
+  editNoteInAPI,
+  deleteNoteFromAPI,
+} from "../reducers/api";
 
 export const NotesList = () => {
   const [isEditing, setIsEditing] = useState({ index: null, value: "" });
@@ -104,21 +108,43 @@ export const NotesList = () => {
   const notes = useSelector((state) => state.notes.notes);
   const dispatch = useDispatch();
 
-  const handleDelete = (index) => {
-    dispatch(deleteNote(index));
-    
-    setCheckedNotes((prev) => prev.filter((_, i) => i !== index));
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const notesData = await fetchNotesFromAPI();
+        dispatch(fetchNotes(notesData));
+      } catch (error) {
+        console.error("Error fetching notes:", error);
+      }
+    };
+    fetchData();
+  }, [dispatch]);
+
+  const handleDelete = async (index) => {
+    try {
+      const noteToDelete = notes[index];
+      await deleteNoteFromAPI(noteToDelete.id);
+      dispatch(deleteNote(index));
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
   };
 
-  const handleEdit = (index) => {
+  const handleEdit = async (index) => {
     if (isEditing.index === index) {
       if (isEditing.value.trim()) {
-        dispatch(editNote(index, isEditing.value));
+        try {
+          const updatedNote = await editNoteInAPI(
+            notes[index].id,
+            isEditing.value
+          );
+          dispatch(editNote(index, updatedNote.text));
+        } catch (error) {
+          console.error("Error editing note:", error);
+        }
       }
-      
       setIsEditing({ index: null, value: "" });
     } else {
-      
       setIsEditing({ index, value: notes[index]?.text || "" });
     }
   };
@@ -130,12 +156,12 @@ export const NotesList = () => {
       return newCheckedNotes;
     });
   };
-
+  console.log(notes);
   return (
     <ul className="mt-4">
-      {Array.isArray(notes) &&
+      {notes &&
         notes.map((note, index) => (
-          <li
+          <div
             key={index}
             className="flex justify-between items-center bg-gray-100 p-3 rounded-md shadow mb-2"
           >
@@ -161,15 +187,17 @@ export const NotesList = () => {
                     checkedNotes[index] ? "text-gray-400 line-through" : ""
                   }`}
                 >
-                  {note.text}
+                  {note.title}
                 </span>
               )}
             </div>
             <div>
-              <span className="mr-4">{note.timestamp}</span>
+              {/* <span className="mr-4">{note.timestamp}</span> */}
               <button
                 onClick={() => handleEdit(index)}
-                className={`bg-${isEditing.index === index ? "green-500" : "blue-500"} text-white p-2 rounded-md hover:bg-blue-600 transition duration-200`}
+                className={`bg-${
+                  isEditing.index === index ? "green-500" : "blue-500"
+                } text-white p-2 rounded-md hover:bg-blue-600 transition duration-200`}
               >
                 {isEditing.index === index ? (
                   <i className="fas fa-save"></i>
@@ -184,7 +212,7 @@ export const NotesList = () => {
                 <i className="fa fa-trash" aria-hidden="true"></i>
               </button>
             </div>
-          </li>
+          </div>
         ))}
     </ul>
   );

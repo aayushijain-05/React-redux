@@ -1,26 +1,38 @@
-// In your actions file
-export const addNote = (noteText) => {
-  const date = new Date();
-  const showTime =
-    date.getHours() + ":" + String(date.getMinutes()).padStart(2, "0");
 
+
+export const ADD_NOTE = "ADD_NOTE";
+export const FETCH_NOTES = "FETCH_NOTES";
+export const EDIT_NOTE = "EDIT_NOTE";
+export const DELETE_NOTE = "DELETE_NOTE";
+
+
+export const fetchNotes = (notes) => {
   return {
-    type: "ADD_NOTE",
-    payload: { text: noteText, timestamp: showTime },
+    type: FETCH_NOTES,
+    payload: notes,
   };
 };
 
-export const editNote = (index, newNote) => ({
-  type: "EDIT_NOTE",
-  payload: { index, newNote },
-});
 
-export const deleteNote = (index) => ({
-  type: "DELETE_NOTE",
-  payload: index,
-});
+export const addNote = (newNote) => {
+  return {
+    type: ADD_NOTE,
+    payload: newNote,
+  };
+};
 
 
-//export DELETE_NODE as "DELETE_NODE"
+export const editNote = (index, newNoteText) => {
+  return {
+    type: EDIT_NOTE,
+    payload: { index, newNoteText },
+  };
+};
 
 
+export const deleteNote = (index) => {
+  return {
+    type: DELETE_NOTE,
+    payload: index,
+  };
+};

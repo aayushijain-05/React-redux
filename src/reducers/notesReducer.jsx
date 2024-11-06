@@ -21,7 +21,10 @@ export const notesReducer = (state = initialState, action) => {
         text: action.payload.newNote,
       };
       return { ...state, notes: updatedNotes };
+
     }
+    case "FETCH_NOTES":
+      return { ...state, notes: action.payload }; 
 
     default:
       return state;
