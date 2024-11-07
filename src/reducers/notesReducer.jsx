@@ -5,6 +5,14 @@ const initialState = {
 
 export const notesReducer = (state = initialState, action) => {
   switch (action.type) {
+
+    case "SET_DATA": 
+      return {
+        ...state,
+        notes: action.payload, 
+      };
+
+
     case "ADD_NOTE": {
       return { ...state, notes: [...state.notes, action.payload] };
     }
@@ -14,17 +22,20 @@ export const notesReducer = (state = initialState, action) => {
         notes: state.notes.filter((_, index) => index !== action.payload),
       };
 
+    
+
     case "EDIT_NOTE": {
       const updatedNotes = [...state.notes];
       updatedNotes[action.payload.index] = {
         ...updatedNotes[action.payload.index],
-        text: action.payload.newNote,
+        title: action.payload.newNoteText,
       };
       return { ...state, notes: updatedNotes };
-
     }
+    
+
     case "FETCH_NOTES":
-      return { ...state, notes: action.payload }; 
+      return { ...state, notes: action.payload };
 
     default:
       return state;

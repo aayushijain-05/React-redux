@@ -4,8 +4,14 @@ export const ADD_NOTE = "ADD_NOTE";
 export const FETCH_NOTES = "FETCH_NOTES";
 export const EDIT_NOTE = "EDIT_NOTE";
 export const DELETE_NOTE = "DELETE_NOTE";
+export const SET_DATA="SET_DATA";
 
-
+export const setData = (notes) => {
+  return {
+    type: SET_DATA,
+    payload: notes, 
+  };
+};
 export const fetchNotes = (notes) => {
   return {
     type: FETCH_NOTES,

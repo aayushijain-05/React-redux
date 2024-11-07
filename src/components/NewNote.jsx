@@ -38,8 +38,6 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { addNote } from "../reducers/actions";
 
-import { addNoteToAPI } from "../reducers/api";
-
 export const NewNoteInput = () => {
   const [note, setNote] = useState("");
   const dispatch = useDispatch();
@@ -56,7 +54,11 @@ export const NewNoteInput = () => {
       date.getHours() + ":" + String(date.getMinutes()).padStart(2, "0");
 
     try {
-      const newNote = await addNoteToAPI(note, showTime);
+      const newNote = {
+        id: Date.now(),
+        title: note,
+        timestamp: showTime,
+      };
 
       dispatch(addNote(newNote));
 
