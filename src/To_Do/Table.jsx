@@ -201,7 +201,7 @@ export const Table = ({ value }) => {
                     </button>
                   )}
 
-                  {task.status === "cancel" && editingTaskId !== task.id && (
+                  {task.status === "cancelled/deleted" && editingTaskId !== task.id && (
                     <button
                       onClick={() => handlePermanentDelete(task.id)}
                       className="text-red-600 hover:text-red-800 p-2 rounded-full transition duration-150"

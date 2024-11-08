@@ -78,7 +78,7 @@ export const Todo = () => {
         <Table value={"ToDo"} />
         <Table value={"In-Progress"} />
         <Table value={"Done"} />
-        <Table value={"Cancel"} />
+        <Table value={"Cancelled/Deleted"} />
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ export const taskReducer = (state = initialState, action) => {
         ...state,
         tasks: state.tasks.map((task) => {
           if (task.id === action.payload) {
-            return { ...task, status: "cancel" };
+            return { ...task, status: "cancelled/deleted" };
           }
           return task;
         }),
