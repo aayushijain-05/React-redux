@@ -106,58 +106,125 @@ export const NotesList = () => {
   const notes = useSelector((state) => state.notes.notes);
   const dispatch = useDispatch();
 
+  // const fetchData = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await axios.get(
+  //       "https://jsonplaceholder.typicode.com/posts"
+  //     );
+  //     console.log("Fetched data:", response.data);
+  //     dispatch(setData(response.data));
+
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 2000);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     setIsLoading(false);
+  //   }
+    
+  // };
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
+      const response = await axios.get("https://jsonplaceholder.typicode.com/posts");
       console.log("Fetched data:", response.data);
       dispatch(setData(response.data));
-
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 2000);
+  
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          setIsLoading(false);
+          resolve();
+        }, 2000);
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
       setIsLoading(false);
     }
-    
   };
+  
 
   useEffect(() => {
     fetchData();
     
   }, []);
 
-  const handleDelete = async (index) => {
+  // const handleDelete = async (index) => {
+  //   setIsLoading(true);
+  //   try {
+  //     dispatch(deleteNote(index));
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 2000);
+  //   } catch (error) {
+  //     console.error("Error deleting note:", error);
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const handleDelete = (index) => {
     setIsLoading(true);
-    try {
-      dispatch(deleteNote(index));
-      setTimeout(() => {
+  
+    return new Promise((resolve, reject) => {
+      try {
+        dispatch(deleteNote(index));
+  
+        setTimeout(() => {
+          setIsLoading(false);
+          resolve();
+        }, 2000);
+      } catch (error) {
+        console.error("Error deleting note:", error);
         setIsLoading(false);
-      }, 2000);
-    } catch (error) {
-      console.error("Error deleting note:", error);
-      setIsLoading(false);
-    }
+        reject(error);
+      }
+    });
   };
+  
+
+  // const handleEdit = async (index) => {
+  //   setIsLoading(true);
+  //   if (isEditing.index === index) {
+  //     if (isEditing.value.trim()) {
+  //       dispatch(editNote(index, isEditing.value));
+  //     }
+  //     setIsEditing({ index: null, value: "" });
+  //     setTimeout(() => {
+  //       setIsLoading(false);
+  //     }, 2000);
+  //   } else {
+  //     setIsEditing({ index, value: notes[index]?.title || "" });
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleEdit = async (index) => {
     setIsLoading(true);
-    if (isEditing.index === index) {
-      if (isEditing.value.trim()) {
-        dispatch(editNote(index, isEditing.value));
-      }
-      setIsEditing({ index: null, value: "" });
-      setTimeout(() => {
+  
+    try {
+      if (isEditing.index === index) {
+        if (isEditing.value.trim()) {
+          await new Promise((resolve) => {
+            dispatch(editNote(index, isEditing.value));
+            setTimeout(() => {
+              setIsLoading(false);
+              resolve();
+            }, 2000);
+          });
+        }
+        setIsEditing({ index: null, value: "" });
+      } else {
+        setIsEditing({ index, value: notes[index]?.title || "" });
         setIsLoading(false);
-      }, 2000);
-    } else {
-      setIsEditing({ index, value: notes[index]?.title || "" });
+      }
+    } catch (error) {
+      console.error("Error editing note:", error);
       setIsLoading(false);
+      
     }
   };
+  
 
   const handleCheckboxChange = (index) => {
     setCheckedNotes((prev) => {
@@ -179,7 +246,7 @@ export const NotesList = () => {
 
   return (
     <div>
-      {/* Render Notes */}
+     
       <ul className="mt-4">
         {notes &&
           notes.map((note, index) => (

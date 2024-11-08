@@ -41,12 +41,14 @@ import { addNote } from "../reducers/actions";
 export const NewNoteInput = () => {
   const [note, setNote] = useState("");
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateNote = (event) => {
     setNote(event.target.value);
   };
 
   const onAddNoteClick = async () => {
+    setIsLoading(true);
     if (!note.trim()) return;
 
     const date = new Date();
@@ -63,10 +65,24 @@ export const NewNoteInput = () => {
       dispatch(addNote(newNote));
 
       setNote("");
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
     } catch (error) {
       console.error("Error adding note:", error);
+      setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="loading-container flex items-center">
+        <div className="spinner"><i className="fa-solid fa-spinner fa-spin-pulse"></i></div> 
+        <div className="loading-text m-2">Adding...</div>
+        
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center">
@@ -83,7 +99,7 @@ export const NewNoteInput = () => {
         onClick={onAddNoteClick}
         className="ml-2 bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition duration-200"
       >
-        Add
+       Add
       </button>
     </div>
   );
